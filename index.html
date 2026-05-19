@@ -159,6 +159,12 @@
             font-weight: bold;
             display: block;
         }
+        .fb-dnd-spec {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
         .c { color: #27ae60; }
         .i { color: #e74c3c; }
     </style>
@@ -422,7 +428,6 @@
                 <span class="drop-zone q-input-dnd" data-ans="debit" data-marks="1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clearDrop(event)"></span> 
                 side of the account.
             </p>
-            <div class="fb"></div>
         </div>
 
         <div class="q-block">
@@ -553,7 +558,6 @@
                 <span class="drop-zone q-input-dnd" data-ans="statutory" data-marks="1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clearDrop(event)"></span> 
                 deductions.
             </p>
-            <div class="fb"></div>
         </div>
 
         <div class="q-block mcq-group" data-ans="Debit: Gross wages $11334, Credit: Tax liabilities $752, Credit: Pension liabilities $567, Credit: Net wages $10015" data-marks="2">
@@ -602,13 +606,13 @@
             <div class="fb"></div>
         </div>
 
-        <div class="q-block mcq-group" data-ans="Neither statement is correct" data-marks="2">
+        <div class="q-block mcq-group" data-ans="A payables ledger control account enables quick identification of the total amount owed by the business to suppliers." data-marks="2">
             <div class="q-title">Question 5</div><span class="marks">(2 marks)</span>
             <p>Which one of the following is correct in relation to the payables ledger control account?</p>
             <label class="mcq-label"><input type="radio" name="l3q5" value="A payables ledger control account enables quick identification of the total amount owed by the business to suppliers."> A payables ledger control account enables quick identification of the total amount owed by the business to suppliers.</label>
             <label class="mcq-label"><input type="radio" name="l3q5" value="A payables ledger control account enables discrepancies between the bank and the subsidiary ledger to be quickly identified"> A payables ledger control account enables discrepancies between the bank and the subsidiary ledger to be quickly identified</label>
             <label class="mcq-label"><input type="radio" name="l3q5" value="A payables ledger control account enables quick identification of an amount owed to a specific supplier"> A payables ledger control account enables quick identification of an amount owed to a specific supplier</label>
-            <label class="mcq-label"><input type="radio" name="l3q5" value="Neither statement is correct"> Neither statement is correct</label>
+            <label class="mcq-label"><input type="radio" name="l3q5" value="A payables ledger control account will always be more accurate than the subsidiary ledger."> A payables ledger control account will always be more accurate than the subsidiary ledger.</label>
             <div class="fb"></div>
         </div>
 
@@ -671,7 +675,6 @@
                 will appear in the 
                 <span class="drop-zone q-input-dnd" data-ans="Statement of Financial Position" data-marks="1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clearDrop(event)"></span>.
             </p>
-            <div class="fb"></div>
         </div>
 
         <div class="q-block">
@@ -831,7 +834,7 @@
 
         <div class="q-block">
             <div class="q-title">Question 13</div><span class="marks">(4 marks)</span>
-            <p>Complete the following statements about irrecoverable debts by selecting from the options below.</p>
+            <p>Complete the following statements about irrecoverable debts by dragging the correct options below.</p>
             <div class="drag-bank">
                 <div class="draggable" draggable="true" ondragstart="drag(event)" data-val="Receivables control account">Receivables control account</div>
                 <div class="draggable" draggable="true" ondragstart="drag(event)" data-val="Discounts allowed day book">Discounts allowed day book</div>
@@ -972,25 +975,27 @@
             }
         });
 
-        // 2. Grade Drag and Drop elements
+        // 2. Grade Drag and Drop elements (with explicitly robust feedback injection)
         document.querySelectorAll('.q-input-dnd').forEach(dropZone => {
             const correctAnswer = dropZone.getAttribute('data-ans');
             const marks = parseInt(dropZone.getAttribute('data-marks'));
             const userValue = dropZone.getAttribute('data-user-val') || '';
-            let parent = dropZone.closest('tr') || dropZone.parentElement;
-            let fb = parent.querySelector('.fb-dnd'); 
             
-            if(!fb && parent.tagName === 'TD') {
-               fb = document.createElement('div');
-               fb.className = 'fb fb-dnd';
-               parent.appendChild(fb);
+            // Check if feedback element already exists next to this dropzone, otherwise create it
+            let fb = dropZone.nextElementSibling;
+            if (!fb || !fb.classList.contains('fb-dnd-spec')) {
+                fb = document.createElement('span');
+                fb.className = 'fb-dnd-spec';
+                dropZone.parentNode.insertBefore(fb, dropZone.nextSibling);
             }
 
             if (userValue.trim() === correctAnswer) {
                 totalScore += marks;
-                if(fb) { fb.innerHTML = '✔'; fb.className = 'fb fb-dnd c'; }
+                fb.innerHTML = '✔ Correct';
+                fb.className = 'fb-dnd-spec c';
             } else {
-                if(fb) { fb.innerHTML = '✘ (' + correctAnswer + ')'; fb.className = 'fb fb-dnd i'; }
+                fb.innerHTML = '✘ (Correct Answer: ' + correctAnswer + ')';
+                fb.className = 'fb-dnd-spec i';
             }
         });
 
